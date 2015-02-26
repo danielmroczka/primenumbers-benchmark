@@ -17,14 +17,12 @@ public class SingleCorePrimeNumber {
 
         time = System.nanoTime() - time;
 
-        System.out.println(count);
-        System.out.println((double) time / 1000000f + " [ms]");
+        System.out.println("Counts: \t" + count);
+        System.out.println("Time: \t" + (double) time / 1000000f + " [ms]");
         System.out.println(System.getenv("PROCESSOR_IDENTIFIER"));
         System.out.println(System.getenv("PROCESSOR_ARCHITECTURE"));
-        System.out.println(System.getenv("NUMBER_OF_PROCESSORS"));
-        System.out.println(System.getProperty("java.vm.specification.version"));
-        System.out.println(System.getProperty("java.vm.version"));
-        System.out.println(System.getProperty("java.vm.name"));
+        System.out.println("Cores: \t" + System.getenv("NUMBER_OF_PROCESSORS"));
+        System.out.println(System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.specification.version") + " " + System.getProperty("java.vm.version"));
         System.out.println(System.getProperty("os.name"));
 
     }
