@@ -1,39 +1,42 @@
 package com.labs.dm.primenumbers.benchmark;
 
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 /**
+ * Multi-core prime number benchmark using a ForkJoinPool with parallel streams.
  *
  * @author daniel
  */
 public class PrimeNumberMulticore {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
+        int limit = 1_000_000;
 
-        //get input till which prime number to be printed
-        System.out.println("Enter the number till which prime number to be printed: ");
-        int limit = 100000;
+        System.out.println("Counting primes up to " + limit + " (multi-core)");
 
-        //printing primer numbers till the limit ( 1 to 100)
-        System.out.println("Printing prime number from 1 to " + limit);
-        int count = 0;
+        Prime prime = new Prime();
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
 
         long time = System.nanoTime();
-        ForkJoinPool forkJoinPool = new ForkJoinPool();
-        
-        //forkJoinPool.e
-
-        for (int number = 2; count < limit; number++) {
-            //print prime numbers only
-            
+        AtomicInteger count = new AtomicInteger();
+        try {
+            forkJoinPool.submit(() ->
+                IntStream.rangeClosed(2, limit)
+                        .parallel()
+                        .filter(prime::isPrime)
+                        .forEach(n -> count.incrementAndGet())
+            ).get();
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Benchmark interrupted: " + e.getMessage());
+        } finally {
+            forkJoinPool.shutdown();
         }
-
         time = System.nanoTime() - time;
 
-        System.out.println(count);
-        System.out.println(time);
-
+        System.out.println("Count: " + count.get());
+        System.out.println("Time:  " + (double) time / 1_000_000 + " [ms]");
     }
-
-    
 }
