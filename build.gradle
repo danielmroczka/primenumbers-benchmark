@@ -32,3 +32,43 @@ tasks.named('jar') {
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
+// ── JVM configuration for local `./gradlew run` ─────────────────────────────
+// Mirror the same flags used inside Docker so results are comparable.
+// Override any value from the command line, e.g.:
+//   ./gradlew run -PjvmXmx=1g -PjvmGc=-XX:+UseZGC
+run {
+    // Heap
+    def xms = project.findProperty('jvmXms') ?: '64m'
+    def xmx = project.findProperty('jvmXmx') ?: '256m'
+
+    // Garbage collector  (G1GC | ZGC | ParallelGC | SerialGC)
+    def gc  = project.findProperty('jvmGc')  ?: '-XX:+UseG1GC'
+
+    jvmArgs = [
+        "-Xms${xms}",
+        "-Xmx${xmx}",
+        gc,
+
+        // G1GC tuning (ignored by other GCs)
+        '-XX:MaxGCPauseMillis=200',
+        '-XX:G1HeapRegionSize=4m',
+        '-XX:InitiatingHeapOccupancyPercent=45',
+
+        // JIT
+        '-XX:+TieredCompilation',
+        '-XX:CompileThreshold=1500',
+
+        // Diagnostics
+        '-XX:+HeapDumpOnOutOfMemoryError',
+        '-XX:HeapDumpPath=/tmp/heapdump.hprof',
+        '-Dfile.encoding=UTF-8',
+
+        // GC logging (unified logging, Java 11+)
+        '-Xlog:gc*:stdout:time,uptime,level,tags',
+    ]
+
+    // Pass APP_MODE via the first CLI arg (default: single)
+    def mode = project.findProperty('appMode') ?: 'single'
+    args = [mode]
+}
+

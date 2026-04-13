@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/com/labs/dm/primenumbers/benchmark/Main.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/com/labs/dm/primenumbers/benchmark/Main.java" />
+              <option name="originalContent" value="package com.labs.dm.primenumbers.benchmark;&#10;&#10;/**&#10; *&#10; * @author daniel &#10; */&#10;public class Main {&#10;    public static void main(String[] args) {&#10;        if (args.length &gt; 0) {&#10;            if (&quot;single&quot;.equalsIgnoreCase(args[0])) {&#10;                SingleCorePrimeNumber.main(args);&#10;            } else if (&quot;multi&quot;.equalsIgnoreCase(args[0])) {&#10;                PrimeNumberMulticore.main(args);&#10;            } else {&#10;                System.out.println(&quot;usage: single|multi&quot;);&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="package com.labs.dm.primenumbers.benchmark;&#10;&#10;import java.util.Arrays;&#10;&#10;/**&#10; * Entry point for the prime-numbers benchmark.&#10; *&#10; * Usage:&#10; *   java -jar app.jar single [limit]&#10; *   java -jar app.jar multi  [limit] [threads]&#10; *&#10; * If no arguments are provided the usage will be printed.&#10; */&#10;public class Main {&#10;&#10;    public static void main(String[] args) {&#10;        if (args.length == 0) {&#10;            printUsage();&#10;            return;&#10;        }&#10;&#10;        String mode = args[0];&#10;&#10;        if (&quot;single&quot;.equalsIgnoreCase(mode)) {&#10;            // forward remaining args to SingleCorePrimeNumber (optional limit)&#10;            String[] forward = (args.length &gt; 1) ? Arrays.copyOfRange(args, 1, args.length) : new String[0];&#10;            SingleCorePrimeNumber.main(forward);&#10;        } else if (&quot;multi&quot;.equalsIgnoreCase(mode)) {&#10;            // forward remaining args to PrimeNumberMulticore (optional limit and threads)&#10;            String[] forward = (args.length &gt; 1) ? Arrays.copyOfRange(args, 1, args.length) : new String[0];&#10;            PrimeNumberMulticore.main(forward);&#10;        } else {&#10;            System.out.println(&quot;Unknown mode: &quot; + mode);&#10;            printUsage();&#10;        }&#10;    }&#10;&#10;    private static void printUsage() {&#10;        System.out.println(&quot;Usage:&quot;);&#10;        System.out.println(&quot;  java -jar app.jar single [limit]&quot;);&#10;        System.out.println(&quot;  java -jar app.jar multi  [limit] [threads]&quot;);&#10;        System.out.println(&quot;Examples:&quot;);&#10;        System.out.println(&quot;  java -jar app.jar single 1000000&quot;);&#10;        System.out.println(&quot;  java -jar app.jar multi 1000000 4&quot;);&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

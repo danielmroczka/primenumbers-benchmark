@@ -1,0 +1,84 @@
+# Prime Numbers Benchmark – Docker Compose
+#
+# Services:
+#   single-g1gc   – single-core + G1GC   (balanced latency/throughput)
+#   single-zgc    – single-core + ZGC    (ultra-low GC pause)
+#   multi-g1gc    – multi-core  + G1GC
+#   multi-zgc     – multi-core  + ZGC
+#
+# Run all:      docker compose up --build
+# Run one:      docker compose run --rm single-g1gc
+# Override heap: docker compose run -e JVM_XMX=1g --rm multi-g1gc
+
+services:
+
+  # ── Single-core × G1GC ──────────────────────────────────────────────────────
+  single-g1gc:
+    build: .
+    image: primenumbers-benchmark:latest
+    environment:
+      APP_MODE: "single"
+      # Heap
+      JVM_XMS: "64m"
+      JVM_XMX: "512m"
+      # GC
+      JVM_GC: "-XX:+UseG1GC"
+      JVM_GC_OPTS: >-
+        -XX:MaxGCPauseMillis=200
+        -XX:G1HeapRegionSize=4m
+        -XX:G1NewSizePercent=5
+        -XX:G1MaxNewSizePercent=60
+        -XX:InitiatingHeapOccupancyPercent=45
+
+  # ── Single-core × ZGC ───────────────────────────────────────────────────────
+  single-zgc:
+    build: .
+    image: primenumbers-benchmark:latest
+    environment:
+      APP_MODE: "single"
+      # Heap
+      JVM_XMS: "64m"
+      JVM_XMX: "512m"
+      # GC – ZGC has no region-size knobs; clear the G1 defaults
+      JVM_GC: "-XX:+UseZGC"
+      JVM_GC_OPTS: >-
+        -XX:ZCollectionInterval=5
+        -XX:ZUncommitDelay=300
+        -XX:SoftMaxHeapSize=400m
+
+  # ── Multi-core × G1GC ───────────────────────────────────────────────────────
+  multi-g1gc:
+    build: .
+    image: primenumbers-benchmark:latest
+    environment:
+      APP_MODE: "multi"
+      # Heap – give more room for parallel workers
+      JVM_XMS: "128m"
+      JVM_XMX: "1g"
+      # GC
+      JVM_GC: "-XX:+UseG1GC"
+      JVM_GC_OPTS: >-
+        -XX:MaxGCPauseMillis=100
+        -XX:G1HeapRegionSize=8m
+        -XX:G1NewSizePercent=10
+        -XX:G1MaxNewSizePercent=60
+        -XX:InitiatingHeapOccupancyPercent=35
+        -XX:ConcGCThreads=2
+
+  # ── Multi-core × ZGC ────────────────────────────────────────────────────────
+  multi-zgc:
+    build: .
+    image: primenumbers-benchmark:latest
+    environment:
+      APP_MODE: "multi"
+      # Heap
+      JVM_XMS: "128m"
+      JVM_XMX: "1g"
+      # GC
+      JVM_GC: "-XX:+UseZGC"
+      JVM_GC_OPTS: >-
+        -XX:ZCollectionInterval=5
+        -XX:ZUncommitDelay=300
+        -XX:SoftMaxHeapSize=768m
+        -XX:ConcGCThreads=2
+

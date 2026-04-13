@@ -7,10 +7,19 @@ package com.labs.dm.primenumbers.benchmark;
  */
 public class SingleCorePrimeNumber {
 
-    public static void main(String[] args) {
-        int limit = 200_000;
+    private static final int DEFAULT_LIMIT = 100_000_000;
 
-        System.out.println("Counting primes up to " + limit);
+    public static void main(String[] args) {
+        int limit = DEFAULT_LIMIT;
+        if (args != null && args.length > 0) {
+            try {
+                limit = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid limit provided, using default: " + DEFAULT_LIMIT);
+            }
+        }
+
+        System.out.println("Counting primes up to " + limit + " (single-core)");
 
         long time = System.nanoTime();
         Prime prime = new Prime();

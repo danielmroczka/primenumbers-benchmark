@@ -1,0 +1,23 @@
+# Gradle build outputs
+build/
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation / CI that is not needed inside the image
+*.md
+.github/
+
